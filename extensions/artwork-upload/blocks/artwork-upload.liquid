@@ -17,8 +17,8 @@
     id="mcgt-artwork-{{ block.id }}"
     data-form-id="{{ form_id }}"
     data-required="{{ block.settings.required }}"
-    data-api="{{ block.settings.api_base | strip | remove_last: '/' }}"
-    data-proxy="{{ routes.root_url | remove_last: '/' }}/apps/mcgt-artwork"
+    data-api="{{ block.settings.api_base | strip | escape }}"
+    data-proxy="{{ routes.root_url }}"
     data-max-mb="20"
     {{ block.shopify_attributes }}
   >

@@ -29,6 +29,10 @@
     var propName = $('.mcgt-artwork__prop-name');
     var propId = $('.mcgt-artwork__prop-id');
     var required = root.dataset.required === 'true';
+    // Trailing slashes are trimmed here, not in Liquid: `remove_last` drops the last "/"
+    // anywhere in the string, which mangled the URL.
+    var api = (root.dataset.api || '').replace(/\/+$/, '');
+    var proxy = (root.dataset.proxy || '/').replace(/\/+$/, '') + '/apps/mcgt-artwork';
     var maxBytes = Number(root.dataset.maxMb || 20) * 1024 * 1024;
 
     var state = { id: '', uploadedAt: 0, busy: false, xhr: null, url: '' };
@@ -63,6 +67,7 @@
       state = { id: '', uploadedAt: 0, busy: false, xhr: null, url: '' };
       setProps('', '');
       fileInput.value = '';
+      statusEl.textContent = '';
       chosen.hidden = true;
       drop.hidden = false;
       bar.hidden = true;
@@ -70,7 +75,7 @@
     }
 
     function getTicket() {
-      return fetch(root.dataset.proxy + '/ticket', { credentials: 'same-origin', cache: 'no-store' })
+      return fetch(proxy + '/ticket', { credentials: 'same-origin', cache: 'no-store' })
         .then(function (r) {
           return r.json().catch(function () { return {}; }).then(function (d) {
             if (!r.ok || !d.ticket) throw new Error(d.error || 'Upload is unavailable right now. Please try again.');
@@ -83,7 +88,7 @@
       return new Promise(function (resolve, reject) {
         var xhr = new XMLHttpRequest();
         state.xhr = xhr;
-        xhr.open('PUT', root.dataset.api + '/upload?t=' + encodeURIComponent(ticket) +
+        xhr.open('PUT', api + '/upload?t=' + encodeURIComponent(ticket) +
           '&name=' + encodeURIComponent(file.name.slice(0, 100)));
         xhr.setRequestHeader('Content-Type', file.type);
         xhr.upload.onprogress = function (e) {
