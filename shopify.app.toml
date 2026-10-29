@@ -4,7 +4,7 @@
 # `shopify-artwork` Cloud Function through the app proxy, and Shopify tells that
 # function about new orders via the orders/create webhook below.
 
-client_id = "425555fae3f401150251ea1e4358115a"
+client_id = "e736c6f3de3327e7bdd5ad2a525c5535"
 name = "MCGT Artwork Upload"
 handle = "mcgt-artwork-upload"
 application_url = "https://mcgt.co.uk/"
