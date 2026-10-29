@@ -38,7 +38,8 @@
     var form = document.getElementById(root.dataset.formId);
     if (!form) {
       var section = root.closest('[id^="shopify-section-"]') || document;
-      form = section.querySelector('form[action*="/cart/add"]');
+      form = section.querySelector('form[action*="/cart/add"]') ||
+        document.querySelector('main form[action*="/cart/add"]');
       if (form) {
         if (!form.id) form.id = 'mcgt-artwork-form-' + Math.random().toString(36).slice(2);
         root.querySelectorAll('input[type=hidden]').forEach(function (i) { i.setAttribute('form', form.id); });
