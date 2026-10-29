@@ -153,9 +153,10 @@
       handle(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]);
     });
 
-    // Gate add-to-cart. Capture phase on document runs before the theme's own submit
-    // handler, so stopping here keeps an artwork-less line out of the cart.
-    document.addEventListener('submit', function (e) {
+    // Gate add-to-cart. Themes like Horizon handle submit in a capture listener on
+    // document, so we listen in the capture phase on window, which runs before any
+    // document listener, and stop the event there to keep an artwork-less line out of the cart.
+    window.addEventListener('submit', function (e) {
       if (!form || e.target !== form) return;
       var msg = '';
       if (state.busy) msg = 'Please wait for your artwork to finish uploading.';
