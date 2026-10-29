@@ -57,6 +57,12 @@ shopify app config link     # first time only: fills client_id
 shopify app deploy          # releases the extension + config (webhook, proxy)
 ```
 
+## Testing
+
+`tests/storefront_e2e.py` drives the live product page in a local Selenium Chromium: it checks the
+block renders only on tagged products, blocks add-to-cart without an upload, uploads a PNG, and
+checks the cart line properties. See the header of that file for how to run it.
+
 ## Licence
 
 MIT. See `LICENSE`.
