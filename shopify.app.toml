@@ -6,7 +6,7 @@
 
 client_id = "e736c6f3de3327e7bdd5ad2a525c5535"
 name = "MCGT Artwork Upload"
-handle = "mcgt-artwork-upload"
+handle = "mcgtltd-artwork-upload"
 application_url = "https://mcgt.co.uk/"
 embedded = false
 
