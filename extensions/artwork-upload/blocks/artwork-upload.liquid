@@ -1,0 +1,109 @@
+{%- comment -%}
+  Artwork upload — lets the customer attach a PNG/JPG to the line item they add to the cart.
+  Renders only on products carrying the configured tag (default `artwork-upload`), so the
+  block can sit in the default product template for every product.
+
+  The file goes to the MCGT backend (never to Shopify); the cart line carries:
+    properties[Artwork]           the file name (shown to the customer in cart/checkout)
+    properties[_artwork_id]       backend upload id (hidden; the order webhook claims it)
+    properties[_artwork_required] marks the line so a missing upload is flagged to staff
+{%- endcomment -%}
+{%- assign p = product | default: closest.product -%}
+{%- assign tag = block.settings.product_tag | strip -%}
+{%- if p != blank and tag == blank or p.tags contains tag or request.design_mode -%}
+  {%- assign form_id = 'BuyButtons-ProductForm-' | append: section.id -%}
+  <div
+    class="mcgt-artwork"
+    id="mcgt-artwork-{{ block.id }}"
+    data-form-id="{{ form_id }}"
+    data-required="{{ block.settings.required }}"
+    data-api="{{ block.settings.api_base | strip | remove_last: '/' }}"
+    data-proxy="{{ routes.root_url | remove_last: '/' }}/apps/mcgt-artwork"
+    data-max-mb="20"
+    {{ block.shopify_attributes }}
+  >
+    <p class="mcgt-artwork__heading">
+      {{ block.settings.heading | escape }}
+      {%- if block.settings.required %} <span class="mcgt-artwork__req" aria-hidden="true">*</span>{% endif -%}
+    </p>
+    {%- if block.settings.help != blank -%}
+      <p class="mcgt-artwork__help">{{ block.settings.help | escape }}</p>
+    {%- endif -%}
+
+    <label class="mcgt-artwork__drop" for="mcgt-artwork-file-{{ block.id }}">
+      <input
+        type="file"
+        id="mcgt-artwork-file-{{ block.id }}"
+        class="mcgt-artwork__file"
+        accept="image/png,image/jpeg"
+      >
+      <span class="mcgt-artwork__cta">Choose an image</span>
+      <span class="mcgt-artwork__hint">PNG or JPG, up to 20MB. Transparent PNGs print best.</span>
+    </label>
+
+    <div class="mcgt-artwork__chosen" hidden>
+      <img class="mcgt-artwork__thumb" alt="Your artwork preview">
+      <div class="mcgt-artwork__meta">
+        <span class="mcgt-artwork__name"></span>
+        <span class="mcgt-artwork__status" role="status" aria-live="polite"></span>
+        <progress class="mcgt-artwork__progress" max="100" value="0" hidden></progress>
+      </div>
+      <button type="button" class="mcgt-artwork__remove">Remove</button>
+    </div>
+    <p class="mcgt-artwork__error" role="alert" hidden></p>
+
+    {%- if block.settings.rights_note != blank -%}
+      <p class="mcgt-artwork__rights">{{ block.settings.rights_note | escape }}</p>
+    {%- endif -%}
+
+    {%- if block.settings.required -%}
+      <input type="hidden" name="properties[_artwork_required]" value="1" form="{{ form_id }}">
+    {%- endif -%}
+    <input type="hidden" name="properties[Artwork]" value="" form="{{ form_id }}" class="mcgt-artwork__prop-name" disabled>
+    <input type="hidden" name="properties[_artwork_id]" value="" form="{{ form_id }}" class="mcgt-artwork__prop-id" disabled>
+  </div>
+  {%- comment -%} Express buttons skip our "artwork required" check, so hide them here. {%- endcomment -%}
+  <style>
+    #{{ form_id }} [data-shopify="payment-button"],
+    #{{ form_id }} .shopify-payment-button { display: none !important; }
+  </style>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Artwork upload",
+  "target": "section",
+  "enabled_on": { "templates": ["product"] },
+  "stylesheet": "artwork-upload.css",
+  "javascript": "artwork-upload.js",
+  "settings": [
+    {
+      "type": "text",
+      "id": "product_tag",
+      "label": "Show on products tagged",
+      "default": "artwork-upload",
+      "info": "Leave blank to show on every product."
+    },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Upload your artwork" },
+    {
+      "type": "text",
+      "id": "help",
+      "label": "Help text",
+      "default": "We print your image as supplied, up to A4 on the front."
+    },
+    { "type": "checkbox", "id": "required", "label": "Require an upload before adding to cart", "default": true },
+    {
+      "type": "text",
+      "id": "rights_note",
+      "label": "Rights note",
+      "default": "By uploading you confirm you own the image or have permission to print it."
+    },
+    {
+      "type": "text",
+      "id": "api_base",
+      "label": "Upload service URL",
+      "default": "https://europe-west2-cloud-project-499409.cloudfunctions.net/shopify-artwork"
+    }
+  ]
+}
+{% endschema %}

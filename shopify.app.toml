@@ -1,0 +1,35 @@
+# MCGT Artwork Upload — a single-store app for mcgtltd.com whose only job is to let
+# customers attach their own artwork to products tagged `artwork-upload`.
+# There is no app UI: the storefront block (extensions/artwork-upload) talks to the
+# `shopify-artwork` Cloud Function through the app proxy, and Shopify tells that
+# function about new orders via the orders/create webhook below.
+
+client_id = ""                      # filled in by `shopify app config link`
+name = "MCGT Artwork Upload"
+handle = "mcgt-artwork-upload"
+application_url = "https://mcgt.co.uk/"
+embedded = false
+
+[build]
+include_config_on_deploy = true
+
+[access_scopes]
+# orders/create webhooks need read_orders. Nothing else: the app never calls the Admin API.
+scopes = "read_orders"
+
+[auth]
+redirect_urls = ["https://mcgt.co.uk/"]
+
+[webhooks]
+api_version = "2026-07"
+
+  [[webhooks.subscriptions]]
+  topics = ["orders/create"]
+  uri = "https://europe-west2-cloud-project-499409.cloudfunctions.net/shopify-artwork/webhook"
+
+# mcgtltd.com/apps/mcgt-artwork/* → <url>/* , signed by Shopify with the app secret.
+# The block fetches /apps/mcgt-artwork/ticket to get a one-time upload ticket.
+[app_proxy]
+url = "https://europe-west2-cloud-project-499409.cloudfunctions.net/shopify-artwork/proxy"
+subpath = "mcgt-artwork"
+prefix = "apps"

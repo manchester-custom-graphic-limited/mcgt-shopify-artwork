@@ -1,0 +1,64 @@
+.mcgt-artwork {
+  --mcgt-fg: rgb(var(--color-foreground-rgb, 18 18 18));
+  --mcgt-muted: rgb(var(--color-foreground-rgb, 18 18 18) / 0.65);
+  --mcgt-line: rgb(var(--color-foreground-rgb, 18 18 18) / 0.2);
+  display: grid;
+  gap: 8px;
+  margin: 4px 0 8px;
+  color: var(--mcgt-fg);
+  font-size: 0.95em;
+}
+.mcgt-artwork__heading { margin: 0; font-weight: 600; }
+.mcgt-artwork__req { color: #b3261e; }
+.mcgt-artwork__help, .mcgt-artwork__hint, .mcgt-artwork__rights { margin: 0; color: var(--mcgt-muted); font-size: 0.9em; }
+
+.mcgt-artwork__drop {
+  display: grid;
+  gap: 4px;
+  justify-items: center;
+  position: relative;
+  padding: 18px 12px;
+  border: 1.5px dashed var(--mcgt-line);
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+.mcgt-artwork__drop:hover, .mcgt-artwork__drop.is-over { border-color: var(--mcgt-fg); }
+.mcgt-artwork__drop:focus-within { outline: 2px solid var(--mcgt-fg); outline-offset: 2px; }
+.mcgt-artwork__file { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.mcgt-artwork__cta { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+
+.mcgt-artwork__chosen {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid var(--mcgt-line);
+  border-radius: 8px;
+}
+.mcgt-artwork__chosen[hidden], .mcgt-artwork__drop[hidden] { display: none; }
+.mcgt-artwork__thumb {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  border-radius: 4px;
+  /* checkerboard so transparent PNGs read as transparent */
+  background: repeating-conic-gradient(#e6e6e6 0 25%, #fff 0 50%) 0 0 / 12px 12px;
+}
+.mcgt-artwork__meta { display: grid; gap: 2px; min-width: 0; }
+.mcgt-artwork__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.mcgt-artwork__status { color: var(--mcgt-muted); font-size: 0.9em; }
+.mcgt-artwork.is-done .mcgt-artwork__status { color: #1e7a3c; }
+.mcgt-artwork__progress { width: 100%; height: 6px; }
+.mcgt-artwork__remove {
+  background: none;
+  border: 0;
+  padding: 6px;
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+  font: inherit;
+}
+.mcgt-artwork__error { margin: 0; color: #b3261e; font-weight: 600; }
